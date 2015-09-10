@@ -389,47 +389,23 @@
 					else if (event.button == 0 && that._isMouseDownL)
 						that._isMouseDownL = false;
 					that._shouldFireContext = false;
-
-
 					if((event.button==0||event.button==1)&&event.target.localName=='menuitem'){
-					const POPUP_ID='GesturePopup';
-				var popup=document.getElementById(this.POPUP_ID);
-				var activeItem=event.target;
-				switch(popup.getAttribute("gesturecommand")){
-					case"WebSearchPopup":
-						var selText=popup.getAttribute("selectedtext");
-						var engine=activeItem.engine;
-						if(!engine)break;
-						var submission=engine.getSubmission(selText,null);
-						if(!submission)break;
-						document.getElementById('searchbar').textbox.value=selText;
-						gBrowser.loadOneTab(submission.uri.spec,null,null,submission.postData,null,false);
-						break;
-					case"ClosedTabsPopup":
-						undoCloseTab(activeItem.index);
-						break;
-					case"HistoryPopup":
-						gBrowser.webNavigation.gotoIndex(activeItem.index);
-						break;
-					case"AllTabsPopup":
-						gBrowser.selectedTab=gBrowser.mTabs[activeItem.index];
-						break;
-					}
-				popup.hidePopup();
-				document.documentElement.removeEventListener("mouseup",this,true);
-					}
-					break;
-				case"popuphiding":
-					const POPUP_ID='GesturePopup';
-					var popup=document.getElementById(this.POPUP_ID);
-					popup.removeAttribute("_gesturecommand");
-				  popup.removeEventListener("DOMMenuItemActive", this, false);
-				  popup.removeEventListener("DOMMenuItemInactive", this, false);
-				  popup.removeEventListener("command", this, false);
-					document.documentElement.removeEventListener("mouseup",this,true);
+						this._isMouseDownL=false;
+						this._shouldFireContext=false;
+						var POPUP_ID='GesturePopup';
+						var popup=document.getElementById(this.POPUP_ID);		
+								switch(popup.getAttribute("gesturecommand")){
+									case"ClosedTabsPopup":
+									var activeItem= popup.currentItem || event.target;
+										undoCloseTab(activeItem.index);
+									break;
+									default :
+								}
+							}
+					popup.removeAttribute("gesturecommand");
 					while(popup.hasChildNodes())popup.removeChild(popup.lastChild);
-					popup.removeEventListener("popuphiding",this,true);
 					break;
+				
 				case "contextmenu":
 					if (that._isMouseDownL || that.isGesIngBtn || that._hideFireContext) {
 						var pref = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService);
@@ -457,8 +433,20 @@
 				case "draggesture":
 					that._isMouseDownL = false;
 					break;
+					
+				case "command":
+					var popup=document.getElementById("GesturePopup");
+								var item = popup.currentItem || event.target;
+								switch(popup.getAttribute("gesturecommand")){
+									case"ClosedTabsPopup":
+										undoCloseTab(activeItem.index);
+									break;
+								}
+					break;				
 			}
 		},
+
+
 
 		/*****************************************************************************************/
 		Listen_AidtKey: function(event, dChain, type) {
@@ -772,6 +760,9 @@
 				var OptionWin = this.OptionWin();
 				window.openDialog("data:application/vnd.mozilla.xul+xml;charset=UTF-8," + OptionWin, '', 'chrome,titlebar,toolbar,centerscreen,dialog=no');
 			}
+		},
+		handleEvent: function(event) {
+			
 		},
 	};
 

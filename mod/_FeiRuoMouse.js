@@ -116,43 +116,45 @@ var GesCustomCommand = [
 	},{
 		label: "[弹出]已关闭标签页", //命令的说明文字
 		command: function(event) { //自定义命令，event为回传事件
-	const POPUP_ID='GesturePopup';
-	var popup=document.getElementById(this.POPUP_ID);
-	if(!popup){
-		popup=document.createElement("menupopup");
-		popup.id=this.POPUP_ID;
-	}
-	document.getElementById("mainPopupSet").appendChild(popup);
-	popup.setAttribute("gesturecommand","ClosedTabsPopup");
-	while(popup.hasChildNodes())popup.removeChild(popup.lastChild);
-try{
-				if(!gPrefService.getBoolPref("browser.sessionstore.enabled"))throw"Session Restore feature is disabled.";
-			}catch(e){}
-			var ss=Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
-			if(ss.getClosedTabCount(window)==0)throw"No restorable tabs in this window.";
-			var undoItems=eval("("+ss.getClosedTabData(window)+")");
-			for(var i = 0; i < undoItems.length; i++){
-				let menuitem=popup.appendChild(document.createElement("menuitem"));
-				menuitem.setAttribute("label",undoItems[i].title);
-				menuitem.setAttribute("class","menuitem-iconic bookmark-item");
-				menuitem.index=i;
-				var iconURL=undoItems[i].image;
-				if(iconURL)menuitem.setAttribute("image",iconURL);
-				let tabData = undoItems[i].state;
-					let activeIndex = (tabData.index || tabData.entries.length) - 1;
-					if (activeIndex >= 0 && tabData.entries[activeIndex]) {
-						let title = tabData.entries[activeIndex].title;
-						let url   = tabData.entries[activeIndex].url;
-						menuitem.setAttribute("tooltiptext", title + "\n" + url);
+					const POPUP_ID='GesturePopup';
+					var popup=document.getElementById(this.POPUP_ID);
+					if(!popup){
+						popup=document.createElement("menupopup");
+						popup.id=this.POPUP_ID;
 					}
-			}
-			document.popupNode=null;
-	document.tooltipNode=null;
-	popup.addEventListener("popuphiding",this,true);
-	popup.openPopup(null,"",event.clientX,event.clientY,false,false);
-	document.documentElement.addEventListener("mouseup",this,true);
+					document.getElementById("mainPopupSet").appendChild(popup);
+					popup.setAttribute("gesturecommand","ClosedTabsPopup");
+					//while(popup.hasChildNodes())popup.removeChild(popup.lastChild);
+				try{
+							if(!gPrefService.getBoolPref("browser.sessionstore.enabled"))throw"Session Restore feature is disabled.";
+							}catch(e){}
+							var ss=Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
+							if(ss.getClosedTabCount(window)==0)throw"No restorable tabs in this window.";
+							var undoItems=eval("("+ss.getClosedTabData(window)+")");
+							for(var i = 0; i < undoItems.length; i++){
+								let menuitem=popup.appendChild(document.createElement("menuitem"));
+								menuitem.setAttribute("label",undoItems[i].title);
+								menuitem.setAttribute("class","menuitem-iconic bookmark-item");
+								menuitem.index=i;
+								var iconURL=undoItems[i].image;
+								if(iconURL)menuitem.setAttribute("image",iconURL);
+								let tabData = undoItems[i].state;
+									let activeIndex = (tabData.index || tabData.entries.length) - 1;
+									if (activeIndex >= 0 && tabData.entries[activeIndex]) {
+										let title = tabData.entries[activeIndex].title;
+										let url   = tabData.entries[activeIndex].url;
+										menuitem.setAttribute("tooltiptext", title + "\n" + url);
+									}
+							}
+							document.popupNode=null;
+					document.tooltipNode=null;
+					popup.openPopup(null,"",event.clientX,event.clientY,false,false);
+					document.documentElement.addEventListener("mouseup",this,false);
+					popup.addEventListener("popuphiding", this  ,false);
+
+
 	}
-}
+}		
 ];
 
 /******************************************************************************************
