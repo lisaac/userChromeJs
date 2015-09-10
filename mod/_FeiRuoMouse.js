@@ -150,7 +150,7 @@ var GesCustomCommand = [
 					document.tooltipNode=null;
 					popup.openPopup(null,"",event.clientX,event.clientY,false,false);
 					document.documentElement.addEventListener("mouseup",this,false);
-					popup.addEventListener("popuphiding", this  ,false);
+					//popup.addEventListener("popuphiding", this  ,false);
 
 
 	}
