@@ -114,7 +114,7 @@ var GesCustomCommand = [
 			FullZoom.reset();
 		}
 	},{
-		label: "[弹出]已关闭标签页", //命令的说明文字
+		label: "[Menu]已关闭标签页", //命令的说明文字
 		command: function(event) { //自定义命令，event为回传事件
 					const POPUP_ID='GesturePopup';
 					var popup=document.getElementById(this.POPUP_ID);
@@ -124,17 +124,18 @@ var GesCustomCommand = [
 					}
 					document.getElementById("mainPopupSet").appendChild(popup);
 					popup.setAttribute("gesturecommand","ClosedTabsPopup");
-					//while(popup.hasChildNodes())popup.removeChild(popup.lastChild);
+					while(popup.hasChildNodes())popup.removeChild(popup.lastChild);
 				try{
 							if(!gPrefService.getBoolPref("browser.sessionstore.enabled"))throw"Session Restore feature is disabled.";
-							}catch(e){}
+							}catch(event){}
 							var ss=Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
-							if(ss.getClosedTabCount(window)==0)throw"No restorable tabs in this window.";
+							if(ss.getClosedTabCount(window)==0)throw"无已关闭窗口.";
 							var undoItems=eval("("+ss.getClosedTabData(window)+")");
 							for(var i = 0; i < undoItems.length; i++){
 								let menuitem=popup.appendChild(document.createElement("menuitem"));
 								menuitem.setAttribute("label",undoItems[i].title);
 								menuitem.setAttribute("class","menuitem-iconic bookmark-item");
+								menuitem.setAttribute("tp","_gesturepopup");
 								menuitem.index=i;
 								var iconURL=undoItems[i].image;
 								if(iconURL)menuitem.setAttribute("image",iconURL);
@@ -147,12 +148,10 @@ var GesCustomCommand = [
 									}
 							}
 							document.popupNode=null;
-					document.tooltipNode=null;
+							document.tooltipNode=null;
+					//popup.addEventListener('popuphiding',this,false);
 					popup.openPopup(null,"",event.clientX,event.clientY,false,false);
-					document.documentElement.addEventListener("mouseup",this,false);
-					//popup.addEventListener("popuphiding", this  ,false);
-
-
+					//popup.addEventListener("mouseup",this,false);
 	}
 }		
 ];
